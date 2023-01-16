@@ -1,4 +1,13 @@
 import { useState, useEffect } from "react"
+
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDay();
+
+  return `${day}.${month}.${year}`;
+}
+
 const App = () => {
 
   const [todos,setTodos] = useState([
@@ -29,7 +38,7 @@ const App = () => {
       prevState = [...prevState];
 
       prevState.push({
-        id: Date.now,
+        id: Date.now(),
         name: value,
         date: new Date(),
         checked: false
@@ -71,11 +80,12 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="main">
       <div>
-        <form onSubmit={(e) => onSubmitHandle(e)}>
-          <h2>Добавить задачу:</h2>
+        <form onSubmit={(e) => onSubmitHandle(e)} className="add-form">
+          <h2 className="form-text">Добавить задачу:</h2>
           <input 
+            className="input-add"
             type="text" 
             placeholder="Купить молоко..."
             onChange={(e) => onChangeHandle(e)}
@@ -88,11 +98,11 @@ const App = () => {
         {
           todos.map((todo) => {
             return (
-              <div>
-                  <h3>{todo.name} ({todo.date.toString()})</h3>
-                <div>
-                  <button onClick={() => onCheckedToggle(todo.id)}>{todo.checked ? "Не выполнена" : "выполнено"}</button>
-                  <button onClick={() => onDeleteTodoById(todo.id)}>Удалить</button>
+              <div className="product">
+                  <h3 className="name">{todo.name} ({formatDate(todo.date)})</h3>
+                <div className="buttons">
+                  <button className="button" onClick={() => onCheckedToggle(todo.id)}>{todo.checked ? "Не выполнена" : "Выполнено"}</button>
+                  <button className="button" onClick={() => onDeleteTodoById(todo.id)}>Удалить</button>
                 </div>
               </div>
             )
