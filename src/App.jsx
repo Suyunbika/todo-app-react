@@ -1,111 +1,104 @@
 import { useState, useEffect } from "react"
-
-const UseEffectComponent = () => {
-  useEffect(() => {
-    return () => console.log("Компонент был удален со страницы")
-  },[])
-
-  return (
-    <div>
-      Тестовый компонент для проверки удаления компонента со страницы
-    </div>
-  )
-}
-
 const App = () => {
 
-  const [count, setCount] = useState(0);
-  const [name, setName] = useState("");
+  const [todos,setTodos] = useState([
+    {
+      id: 1, 
+      name: "Купить продукты",
+      date: new Date(),
+      checked: false
+    },
+    {
+      id: 2, 
+      name: "Заправить автомобиль",
+      date: new Date(),
+      checked: false
+    }
+  ]);
 
-  const [skills, setScills] = useState(['Front-End', 'Back-End', 'CI/CD']);
+  const [value, setValue] = useState('');
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const onChangeHandle = (event) => {
+    setValue(event.target.value);
+  }
 
-  const [a, setA] = useState(0);
+  const onSubmitHandle = (event) => {
+    event.preventDefault();
 
-  useEffect(() => {
-    console.log('Произошел первый рендер');
-  }, [count, form]);
+    setTodos((prevState) => {
+      prevState = [...prevState];
 
-  const onChangeFormHandle = (e) => {
-    setForm((prevState) => {
-      prevState = {...prevState};
+      prevState.push({
+        id: Date.now,
+        name: value,
+        date: new Date(),
+        checked: false
+      });
 
-      prevState[e.target.name] = e.target.value;
+      return prevState;
+    });
+
+    setValue('');
+  }
+
+  const onCheckedToggle = (id) => {
+    setTodos((prevState) => {
+      prevState = [...prevState];
+
+      prevState = prevState.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            checked: !todo.checked
+          }
+        }
+
+        return todo;
+      });
 
       return prevState;
     });
   }
 
-  const onChangeHandle = (e) => {
-    setName (e.target.value);
-    setCount(e.target.value.length);
-  };
+  const onDeleteTodoById = (id) => {
+    setTodos((prevState) => {
+      prevState = [...prevState];
 
-  const onSubmitAddSkill = (e) => {
-    
-    console.log(e);
-    if (e.keyCode === 13){
-      setScills((prevState) => {
-        return [...prevState, e.target.value];
-      });
+      prevState = prevState.filter((todo) => todo.id !== id);
 
-    }
-  };
+      return prevState;
+    });
+  }
 
   return (
     <div>
-      <p>Вы нажали на меня {count} раз(a)</p>
-      <button onClick={() => setCount((prev) => prev + 1)}>+1</button>
-      <button onClick={() => setCount(count + 5)}>+5</button>
+      <div>
+        <form onSubmit={(e) => onSubmitHandle(e)}>
+          <h2>Добавить задачу:</h2>
+          <input 
+            type="text" 
+            placeholder="Купить молоко..."
+            onChange={(e) => onChangeHandle(e)}
+            value={value}
+          />
+        </form>
+      </div>
 
-      {
-        count >=10 ? <h1>Компонент больше недоступен</h1> : <UseEffectComponent />
-      }
-
-      <br />
-
-      <h1>Привет, {name}!</h1>
-      <input type="text" onSubmit={(e) => onChangeHandle(e)}/>
-
-      <br />
-
-      <input type="text" onKeyDown={(e) => onSubmitAddSkill(e)}/>
-
-      <ul>
-      {
-        skills.map((skill) => {
-          return (
-            <li>{skill}</li>
-          )
-        })
-      }
-      </ul>
-
-      <br />
-
-      <form onSubmit={(e) => e.preventDefault()}>
-        <label>Email:</label>
-        <input 
-          type="email" 
-          name="email" 
-          onChange={(e) => onChangeFormHandle(e)}
-          value={form.email}
-        />
-
-        <label>Password:</label>
-        <input 
-          type="password" 
-          name="password"
-          onChange={(e) => onChangeFormHandle(e)}
-          value={form.password}
-        />
-
-        <button>Отправить форму</button>
-      </form>
+      <div>
+        {
+          todos.map((todo) => {
+            return (
+              <div>
+                  <h3>{todo.name} ({todo.date.toString()})</h3>
+                <div>
+                  <button onClick={() => onCheckedToggle(todo.id)}>{todo.checked ? "Не выполнена" : "выполнено"}</button>
+                  <button onClick={() => onDeleteTodoById(todo.id)}>Удалить</button>
+                </div>
+              </div>
+            )
+          })
+        }
+      </div>
     </div>
   );
 };
