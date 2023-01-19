@@ -20,6 +20,8 @@ const TodoHeader = ({ setTodos }) => {
             date: new Date(),
             checked: false
           });
+
+          localStorage.setItem('todos', JSON.stringify(prevState));
     
           return prevState;
         });

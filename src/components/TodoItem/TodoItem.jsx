@@ -16,6 +16,8 @@ const TodoItem = ({ setTodos, todo }) => {
     
             return todo;
           });
+
+          localStorage.setItem('todos', JSON.stringify(prevState));
     
           return prevState;
         });
